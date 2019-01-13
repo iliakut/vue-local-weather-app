@@ -1,33 +1,46 @@
 <template>
-  <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL DESIGN</span>
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Latest Release</span>
-      </v-btn>
-    </v-toolbar>
+  <v-app black>
+    <v-navigation-drawer app fixed clipped>
+      <v-list>
+        <v-list-tile :to="'/About'">
+          About
+        </v-list-tile>
+        <v-list-tile :to="'/Localweather'">
+          Local weather
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
 
-    <v-content>
-      <HelloWorld/>
-    </v-content>
+    <v-toolbar app fixed clipped-left>
+      <v-menu>
+        <v-toolbar-title slot="activator">
+          Navigation
+        </v-toolbar-title>
+        <v-list>
+          <v-list-tile :to="'/About'">
+            About
+          </v-list-tile>
+          <v-list-tile :to="'/Localweather'">
+            Local weather
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+    </v-toolbar>
+    <v-fade-transition mode="out-in">
+      <router-view></router-view>
+    </v-fade-transition>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import HelloWorld from './views/Localweather'
+import About from './views/About'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HelloWorld,
+    About
   },
   data () {
     return {
