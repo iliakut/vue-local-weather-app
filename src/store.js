@@ -49,7 +49,7 @@ export default new Vuex.Store({
       function error(err) {
         console.warn(`ERROR(${err.code}): ${err.message}`);
       }
-
+/**/
       navigator.geolocation.getCurrentPosition(success, error, options);
     },
     getLocationKey({ commit, state }) {
