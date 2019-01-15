@@ -27,3 +27,7 @@ yarn run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Demo:
+https://nostalgic-goldwasser-1443fd.netlify.com/#/
+the demo does't work properly
