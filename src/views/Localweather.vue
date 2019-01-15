@@ -41,10 +41,8 @@
       </v-layout>
       </v-card>
     </v-container>
-
-<v-container>
-  <v-card
-  >
+    <v-container>
+      <v-card>
     <v-sheet
         class="v-sheet--offset mx-auto"
         color="indigo  accent-2"
@@ -67,12 +65,12 @@
       </div>
     </v-card-text>
   </v-card>
-</v-container>
-
+    </v-container>
+    <v-container>
+        <v-btn @click="updateDataandTime">Update</v-btn>
+      <span class="grey--text">Weather updated at {{ time }}</span>
+    </v-container>
   </v-content>
-
-
-
 </template>
 
 <script>
@@ -84,7 +82,8 @@
       ...mapState (["weather", "iconsSrc", "weatherArr"]),
       ...mapGetters (["mainWeatherNumbers", "windInfo", "weatherInfo", "getWeatherText", "getWeatherArr"]),
       value: [],
-      labels: []
+      labels: [],
+      time: ""
     }),
    methods: {
      ...mapActions(["getLocation", "getLocalWeather", "getLocalWeatherSeveral"]),
@@ -95,7 +94,16 @@
        setTimeout(() => {
          this.getLocalWeather();
          this.getLocalWeatherSeveral();
+         this.updateTime();
        }, 100);
+     },
+     updateTime: function() {
+       let date = new Date();
+       this.time = date.getHours() + "h. " + date.getMinutes() + "m. " + date.getSeconds() + "s.";
+     },
+     updateDataandTime() {
+       this.updateLocation();
+       this.updateLocationWeather();
      }
    },
     mounted: function() {
