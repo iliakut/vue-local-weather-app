@@ -8,19 +8,67 @@ export default new Vuex.Store({
   state: {
     result: {},
     location: {
-      latitude: 0,
-      longitude: 0
+      latitude: 59.9386300,
+      longitude: 30.3141300
     },
     weather: {
-      main: 0,
-      wind: 0,
-      weather: [0]
-    }
+      base:"stations",
+      main: {
+        "temp":-2,
+        "pressure":980,
+        "humidity":92,
+        "temp_min":-2,
+        "temp_max":-2},
+      wind: {
+        "speed":3,
+        "deg":270},
+      weather: [{
+        "id":620,
+        "main":"Snow",
+        "description":"light shower snow",
+        "icon":"13n"}]
+    },
+    iconsSrc: {
+      "01d": "http://openweathermap.org/img/w/01d.png",
+      "01n": "http://openweathermap.org/img/w/01n.png",
+      "02d": "http://openweathermap.org/img/w/02d.png",
+      "02n": "http://openweathermap.org/img/w/02n.png",
+      "03d": "http://openweathermap.org/img/w/03d.png",
+      "03n": "http://openweathermap.org/img/w/03n.png",
+      "04d": "http://openweathermap.org/img/w/04d.png",
+      "04n": "http://openweathermap.org/img/w/04n.png",
+      "09d": "http://openweathermap.org/img/w/09d.png",
+      "09n": "http://openweathermap.org/img/w/09n.png",
+      "10d": "http://openweathermap.org/img/w/10d.png",
+      "10n": "http://openweathermap.org/img/w/10n.png",
+      "11d": "http://openweathermap.org/img/w/11d.png",
+      "11n": "http://openweathermap.org/img/w/11n.png",
+      "13d": "http://openweathermap.org/img/w/13d.png",
+      "13n": "http://openweathermap.org/img/w/13n.png",
+      "50d": "http://openweathermap.org/img/w/50d.png",
+      "50n": "http://openweathermap.org/img/w/50n.png"
+    },
+    weatherArr: [{
+      "dt_txt": "",
+      "main": {
+        "temp": "0"
+      }
+    }]
   },
   getters: {
     mainWeatherNumbers: state => { return state.weather.main },
     windInfo: state => { return state.weather.wind },
-    weatherInfo: state => { return state.weather.weather[0] }
+    weatherInfo: state => { return state.weather.weather[0] },
+    getWeatherText: state => {
+      return state.weatherArr.map(item => {
+        return item.dt_txt;
+      })
+    },
+    getWeatherArr: state => {
+      return state.weatherArr.map(item => {
+        return item.main.temp;
+      })
+    }
   },
   mutations: {
     setLocation(state, location) {
@@ -32,6 +80,9 @@ export default new Vuex.Store({
     },
     setWeather(state, weather) {
       state.weather = weather;
+    },
+    setWeatherArr(state, arr) {
+      state.weatherArr = arr;
     }
   },
   actions: {
@@ -49,20 +100,30 @@ export default new Vuex.Store({
       function error(err) {
         console.warn(`ERROR(${err.code}): ${err.message}`);
       }
-/**/
       navigator.geolocation.getCurrentPosition(success, error, options);
     },
-    getLocationKey({ commit, state }) {
+    getLocalWeather({ commit, state }) {
       const lat = state.location.latitude;
       const long = state.location.longitude;
       const APIkey = "5c28bda07c6ade5505cb5932556d6e92";
       const url = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${APIkey}&units=metric`;
-        /*.then(response => (commit("setLocationKey", response.data.Key)))*/
       axios
         .get(url)
         .then(response => commit("setWeather", response.data))
         .catch(error => console.log(error));
-
+    },
+    getLocalWeatherSeveral({ commit, state }) {
+      const lat = state.location.latitude;
+      const long = state.location.longitude;
+      const APIkey = "5c28bda07c6ade5505cb5932556d6e92";
+      const url = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&APPID=${APIkey}&units=metric`;
+      axios
+        .get(url)
+        .then(response => {
+          let responseArr = response.data.list.splice(0, 5);
+          console.log("weather Arr's been received");
+          commit("setWeatherArr", responseArr)})
+        .catch(error => console.log(error));
     }
   }
 })
