@@ -9,33 +9,33 @@
         <v-flex xs12>
           <div>
             <span class="grey--text">Temperature</span>
-            <span> {{ mainWeatherNumbers().temp }} °C</span><br>
-            <v-img :src="iconsSrc()[weatherInfo().icon]" max-height="70"
+            <span> {{ weather().temperature }} °C</span><br>
+            <v-img max-height="70"
                    contain></v-img>
           </div>
         </v-flex>
         <v-flex xs3>
           <div>
             <span class="grey--text">Pressure</span><br>
-            <span>{{ mainWeatherNumbers().pressure }} hPa</span>
+            <span>{{ weather().pressure }} hPa</span>
           </div>
         </v-flex>
         <v-flex xs3>
           <div>
             <span class="grey--text">Humidity</span><br>
-            <span>{{ mainWeatherNumbers().humidity }} %</span>
+            <span>{{ weather().humidity * 100 }} %</span>
           </div>
         </v-flex>
         <v-flex xs3>
           <div>
             <span class="grey--text">Wind</span><br>
-            <span>{{ windInfo().speed }} m/s</span>
+            <span>{{ weather().windSpeed }} m/s</span>
           </div>
         </v-flex>
         <v-flex xs3>
           <div>
             <span class="grey--text">Precipitation</span><br>
-            <span>{{ weatherInfo().description }}</span>
+            <span>{{ weather().summary }}</span>
           </div>
         </v-flex>
       </v-layout>
@@ -47,29 +47,26 @@
         class="v-sheet--offset mx-auto"
         color="indigo  accent-2"
         elevation="12"
-        max-width="calc(100% - 32px)"
-    >
-      <v-sparkline
-            :labels="getWeatherText()"
-            :value="getWeatherArr()"
+        max-width="calc(100% - 32px)">
+    </v-sheet>
+        <v-sparkline
+            :labels="getWeatherArrTemp()"
+            :value="getWeatherArrTemp()"
             color="white"
             line-width="1"
             padding="15"
         ></v-sparkline>
-
-    </v-sheet>
-
     <v-card-text class="pt-0">
       <div class="title font-weight-light mb-2">
-        Temperature sparkline
+        Temperature sparkline (for 24 next hours)
       </div>
     </v-card-text>
   </v-card>
     </v-container>
     <v-container>
         <v-btn @click="updateDataAndTime">Update</v-btn>
-      <span class="grey--text">Weather updated at {{ time() }}</span>
-      <v-btn @click="getTest()">Test</v-btn>
+      <span v-if="time() === ''"  class="grey--text">Weather was not updated</span>
+      <span v-else class="grey--text">Weather updated at {{ time() }}</span>
     </v-container>
   </v-content>
 </template>
@@ -80,20 +77,19 @@
   import { mapGetters } from 'vuex'
   export default {
     data: () => ({
-      ...mapState (["weather", "iconsSrc", "weatherArr", "time"]),
-      ...mapGetters (["mainWeatherNumbers", "windInfo", "weatherInfo", "getWeatherText", "getWeatherArr"]),
+      ...mapState (["weather", "time"]),
+      ...mapGetters (["getWeatherArrTemp"]),
       value: [],
       labels: []
     }),
    methods: {
-     ...mapActions(["getLocation", "getLocalWeather", "getLocalWeatherSeveral", "getTest"]),
+     ...mapActions(["getLocation", "getWeather"]),
      updateLocation: function() {
        this.getLocation();
      },
      updateLocationWeather: function() {
        setTimeout(() => {
-         this.getLocalWeather();
-         this.getLocalWeatherSeveral();
+         this.getWeather();
        }, 100);
      },
      updateDataAndTime() {
