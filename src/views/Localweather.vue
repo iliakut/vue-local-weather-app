@@ -52,7 +52,7 @@
         <v-sparkline
             :labels="getWeatherArrTemp()"
             :value="getWeatherArrTemp()"
-            color="white"
+            color="blue"
             line-width="1"
             padding="15"
         ></v-sparkline>
