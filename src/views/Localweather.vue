@@ -67,8 +67,9 @@
   </v-card>
     </v-container>
     <v-container>
-        <v-btn @click="updateDataandTime">Update</v-btn>
-      <span class="grey--text">Weather updated at {{ time }}</span>
+        <v-btn @click="updateDataAndTime">Update</v-btn>
+      <span class="grey--text">Weather updated at {{ time() }}</span>
+      <v-btn @click="getTest()">Test</v-btn>
     </v-container>
   </v-content>
 </template>
@@ -79,14 +80,13 @@
   import { mapGetters } from 'vuex'
   export default {
     data: () => ({
-      ...mapState (["weather", "iconsSrc", "weatherArr"]),
+      ...mapState (["weather", "iconsSrc", "weatherArr", "time"]),
       ...mapGetters (["mainWeatherNumbers", "windInfo", "weatherInfo", "getWeatherText", "getWeatherArr"]),
       value: [],
-      labels: [],
-      time: ""
+      labels: []
     }),
    methods: {
-     ...mapActions(["getLocation", "getLocalWeather", "getLocalWeatherSeveral"]),
+     ...mapActions(["getLocation", "getLocalWeather", "getLocalWeatherSeveral", "getTest"]),
      updateLocation: function() {
        this.getLocation();
      },
@@ -94,14 +94,10 @@
        setTimeout(() => {
          this.getLocalWeather();
          this.getLocalWeatherSeveral();
-         this.updateTime();
        }, 100);
      },
-     updateTime: function() {
-       let date = new Date();
-       this.time = date.getHours() + "h. " + date.getMinutes() + "m. " + date.getSeconds() + "s.";
-     },
-     updateDataandTime() {
+     updateDataAndTime() {
+       // time updated in Vuex
        this.updateLocation();
        this.updateLocationWeather();
      }

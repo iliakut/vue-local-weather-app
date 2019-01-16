@@ -30,8 +30,6 @@
 </template>
 
 <script>
-import HelloWorld from './views/Localweather'
-import About from './views/About'
 
 export default {
   name: 'App',

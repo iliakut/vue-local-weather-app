@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import jsonp from "jsonp";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     result: {},
+    time: "",
     location: {
       latitude: 59.9386300,
       longitude: 30.3141300
@@ -83,9 +85,18 @@ export default new Vuex.Store({
     },
     setWeatherArr(state, arr) {
       state.weatherArr = arr;
+    },
+    setTime(state, time) {
+      state.time = time;
     }
   },
   actions: {
+    updateTime({ commit }) {
+      let date = new Date();
+      let time = this.time = date.getHours() + "h. " + date.getMinutes() + "m. " + date.getSeconds() + "s.";
+      commit("setTime", time);
+
+    },
     getLocation({ commit }) {
       const options = {
         timeout: 5000,
@@ -102,14 +113,16 @@ export default new Vuex.Store({
       }
       navigator.geolocation.getCurrentPosition(success, error, options);
     },
-    getLocalWeather({ commit, state }) {
+    getLocalWeather({ commit, state, dispatch }) {
       const lat = state.location.latitude;
       const long = state.location.longitude;
       const APIkey = "5c28bda07c6ade5505cb5932556d6e92";
       const url = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${APIkey}&units=metric`;
       axios
         .get(url)
-        .then(response => commit("setWeather", response.data))
+        .then(response => {
+          dispatch("updateTime");
+          commit("setWeather", response.data)})
         .catch(error => console.log(error));
     },
     getLocalWeatherSeveral({ commit, state }) {
@@ -124,6 +137,16 @@ export default new Vuex.Store({
           console.log("weather Arr's been received");
           commit("setWeatherArr", responseArr)})
         .catch(error => console.log(error));
+    },
+    getTest({commit}) {
+      const query = "123";
+      const url = "https://api.darksky.net/forecast/71be0b2a7e5f034a07355a1a85166e75/37.8267,-122.4233";
+      jsonp(url, (error, response) => {
+        if (error) {
+          throw error;
+        }
+        console.log(response);
+      });
     }
   }
 })
